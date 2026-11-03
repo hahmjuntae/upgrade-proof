@@ -5,7 +5,7 @@
   "description": "Demo project for Upgrade Proof. It pins chalk 4 and carries a test helper with a hostile postinstall script.",
   "main": "index.js",
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test"
   },
   "dependencies": {
     "chalk": "^4.1.2"
