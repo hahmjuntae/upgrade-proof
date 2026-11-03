@@ -1,0 +1,20 @@
+services:
+  egress-proxy:
+    image: node:24-bookworm-slim
+    container_name: egress-proxy
+    command: ["node", "/app/src/egress-proxy.js"]
+    environment:
+      EGRESS_ALLOWLIST: registry.npmjs.org
+      EGRESS_LOG: /var/log/upgrade-proof/egress.jsonl
+    volumes:
+      - ../src:/app/src:ro
+      - /var/log/upgrade-proof:/var/log/upgrade-proof
+    networks: [sandbox, egress]
+    restart: unless-stopped
+
+networks:
+  sandbox:
+    name: upgrade-proof-sandbox
+    internal: true
+  egress:
+    name: upgrade-proof-egress

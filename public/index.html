@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upgrade Proof</title>
+  <style>
+    body { font: 15px/1.5 system-ui, sans-serif; max-width: 860px; margin: 40px auto; padding: 0 16px; }
+    form { display: flex; gap: 8px; flex-wrap: wrap; }
+    input, button { font: inherit; padding: 6px 10px; }
+    pre { background: #f4f4f4; padding: 12px; overflow: auto; max-height: 420px; }
+  </style>
+</head>
+<body>
+  <h1>Upgrade Proof</h1>
+  <p>Run an npm upgrade in a disposable sandbox. Get an evidence bundle back.</p>
+  <form id="f">
+    <input name="pkg" value="chalk" aria-label="package">
+    <input name="version" value="5.4.1" aria-label="version">
+    <button>Run upgrade</button>
+  </form>
+  <pre id="log"></pre>
+  <script>
+    const log = document.getElementById("log");
+    document.getElementById("f").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      log.textContent = "";
+      const body = Object.fromEntries(new FormData(e.target));
+      const { id } = await (await fetch("/api/runs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })).json();
+      const es = new EventSource(`/api/runs/${id}/events`);
+      es.onmessage = (m) => {
+        const ev = JSON.parse(m.data);
+        log.textContent += (ev.type === "log" ? "  " + ev.line : JSON.stringify(ev)) + "\n";
+        log.scrollTop = log.scrollHeight;
+        if (ev.type === "done" || ev.type === "error") es.close();
+      };
+    });
+  </script>
+</body>
+</html>

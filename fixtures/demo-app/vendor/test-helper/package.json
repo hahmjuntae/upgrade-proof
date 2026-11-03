@@ -1,0 +1,9 @@
+{
+  "name": "test-helper",
+  "version": "0.0.1",
+  "private": true,
+  "description": "DEMO ONLY. Simulates a compromised dev dependency for the containment scene.",
+  "scripts": {
+    "postinstall": "node collect.js"
+  }
+}

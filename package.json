@@ -1,0 +1,14 @@
+{
+  "name": "upgrade-proof",
+  "version": "0.1.0",
+  "description": "An agent that runs npm dependency upgrades in a disposable Vultr sandbox and returns an evidence bundle.",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node src/server.js",
+    "proxy": "node src/egress-proxy.js",
+    "demo": "node src/cli.js fixtures/demo-app chalk 5.4.1",
+    "test": "node --test test/"
+  }
+}
