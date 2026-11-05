@@ -1,40 +1,73 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Upgrade Proof</title>
-  <style>
-    body { font: 15px/1.5 system-ui, sans-serif; max-width: 860px; margin: 40px auto; padding: 0 16px; }
-    form { display: flex; gap: 8px; flex-wrap: wrap; }
-    input, button { font: inherit; padding: 6px 10px; }
-    pre { background: #f4f4f4; padding: 12px; overflow: auto; max-height: 420px; }
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upgrade Proof</title>
+<link rel="stylesheet" href="/design/ds.css">
+<style>
+body>main .logs{height:112px!important}body>main .timeline{padding:12px 20px!important}body>main .intro{margin-bottom:16px!important}body>main .timeline .number{width:24px;height:24px}body>main footer{margin-top:14px}body>main .evidence-body .file{padding:4px 8px}body>main .result-line{margin-bottom:10px}
+html{padding:0!important;margin:0!important;height:auto!important;overflow:auto!important}body{padding:0!important;margin:0!important;height:auto!important;overflow:visible!important}.timeline .stage{min-height:0}.timeline .number{margin-bottom:6px!important}.right{gap:12px!important}.logs{height:144px!important}.panel-title{height:44px!important;min-height:44px!important}.input-panel{align-self:start}.input-panel p{margin-bottom:16px!important}header{position:static!important;margin:0!important}body>header{height:68px!important}main{min-height:0!important}h1,h2,h3{padding:0!important}ol.timeline{padding:18px 20px!important}.right{grid-template-rows:auto auto auto;align-content:start}.panel-title{min-height:48px}.intro{padding:0!important}body>main{padding-top:24px!important}body>main .intro h1{margin:6px 0!important;font-size:32px!important}body>main .intro{margin-bottom:20px!important}.logs{height:144px!important}body>main .panel-title{padding:12px 20px!important}body>main .evidence-body{padding:14px 20px!important}*{box-sizing:border-box}body{margin:0;background:var(--gray-0);color:var(--color-text-primary);font:14px/1.5 var(--font-sans)}button,input,select{font:inherit}button,a,input,select{outline-offset:4px}button{cursor:pointer;transition:transform 140ms cubic-bezier(.23,1,.32,1),background-color 140ms ease}button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:not-allowed}a{color:inherit}header{height:76px;border-bottom:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between;padding:0 40px}.brand{display:flex;gap:12px;align-items:center;font-size:17px;font-weight:650;letter-spacing:-.5px}.mark{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--color-border-strong);border-radius:var(--radius-md);font-size:21px}.subtle,.eyebrow{color:var(--color-text-secondary)}.eyebrow{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}.header-right{display:flex;align-items:center;gap:20px}.badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;border:1px solid var(--color-border);border-radius:var(--radius-full);padding:4px 10px}.dot{width:6px;height:6px;border-radius:50%;background:var(--green-400)}#theme{background:none;border:1px solid var(--color-border);color:inherit;border-radius:var(--radius-md);padding:6px 12px}main{max-width:1440px;margin:auto;padding:32px 40px 24px}.intro{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px}h1{font-size:34px;letter-spacing:-1.3px;line-height:1.2;margin:8px 0}p{margin:0}.workspace{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px}.panel{border:1px solid var(--color-border);border-radius:var(--radius-xl);background:var(--color-surface-secondary);overflow:hidden}.panel-title{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--color-border);font-weight:550}.input-panel{padding:22px}.input-panel h2{font-size:16px;margin:0 0 5px}.input-panel p{font-size:12px;margin-bottom:24px;color:var(--color-text-secondary)}label{display:block;font-size:12px;margin:18px 0 7px;color:var(--color-text-secondary)}input,select{display:block;width:100%;height:42px;background:var(--gray-0);color:var(--color-text-primary);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:8px 12px}input:focus,select:focus{border-color:var(--color-text-secondary)}.row{display:grid;grid-template-columns:1fr 100px;gap:12px}.primary{width:100%;height:44px;margin-top:24px;background:var(--color-text-primary);color:var(--gray-0);font-weight:650;border:0;border-radius:var(--radius-md)}.hint{font-size:11px;color:var(--color-text-secondary);margin-top:12px}.guardrails{border-top:1px solid var(--color-border);margin-top:26px;padding-top:20px;font-size:12px;color:var(--color-text-secondary)}.guardrails div{margin-top:9px}.right{min-width:0;display:grid;gap:16px}.timeline{display:grid;grid-template-columns:repeat(5,1fr);padding:20px;gap:12px}.stage{position:relative;color:var(--color-text-secondary);font-size:12px}.stage .number{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--color-border-strong);border-radius:50%;margin-bottom:10px;font-size:11px}.stage strong{display:block;color:var(--color-text-primary);font-weight:500}.stage span{font-size:11px}.stage[data-state=running] .number{border-color:var(--blue-400);color:var(--blue-300);box-shadow:0 0 0 4px var(--blue-a25)}.stage[data-state=passed] .number{color:var(--green-400);border-color:var(--green-600);background:var(--green-a25)}.stage[data-state=failed] .number{color:var(--red-200);border-color:var(--red-400)}.middle{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(260px,1fr);gap:16px}.logs{height:205px;overflow:auto;padding:16px 20px;margin:0;font:11px/1.8 var(--font-mono);white-space:pre-wrap;overflow-wrap:anywhere;background:var(--gray-0)}.containment{border-color:var(--color-border)}.containment[data-blocked=true]{border-color:var(--red-400);background:var(--red-a25)}.blocked-title{font-size:14px;margin:0}.containment[data-blocked=true] .blocked-title,.red{color:var(--red-200)}.contain-body{padding:18px 20px}.contain-body h3{font-size:26px;letter-spacing:-.7px;line-height:1.2;margin:0 0 8px}.contain-body p{font-size:12px;color:var(--color-text-secondary)}#blocked-detail{max-height:110px;overflow:auto;font:10px/1.8 var(--font-mono);overflow-wrap:anywhere;white-space:pre-wrap;margin-top:12px}.evidence-body{padding:18px 20px}.result-line{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px}#verdict{font-size:20px;font-weight:550;letter-spacing:-.5px}#verdict[data-result=upgrade-proven]{color:var(--green-400)}#verdict[data-result=upgrade-fails],#verdict[data-result=baseline-broken]{color:var(--red-200)}#sha{font:10px/1.6 var(--font-mono);overflow-wrap:anywhere;color:var(--color-text-secondary);max-width:540px;user-select:all}#files{display:flex;flex-wrap:wrap;gap:8px}.file{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border:1px solid var(--color-border);border-radius:var(--radius-sm);font:11px var(--font-mono);text-decoration:none}.file:hover{background:var(--alpha-08)}.empty{color:var(--color-text-secondary);font-size:12px}#error{color:var(--red-200);font-size:12px;margin-top:14px;overflow-wrap:anywhere}footer{display:flex;justify-content:space-between;margin-top:20px;font-size:11px;color:var(--color-text-secondary)}[hidden]{display:none!important}@media(max-width:1000px){header{padding:0 20px}main{padding:24px 20px}.workspace{grid-template-columns:250px 1fr}.middle{grid-template-columns:1fr}.logs{height:180px}.intro .badge{display:none}}@media(max-width:700px){header{height:64px}.header-right .badge{display:none}main{padding:24px 16px}.workspace{grid-template-columns:1fr}.intro{display:block}h1{font-size:28px}.timeline{gap:6px;padding:16px}.stage strong{font-size:11px}.stage span{font-size:10px}.result-line,footer{display:block}.result-line>div+div{margin-top:12px}footer span{display:block;margin-top:5px}}@media(prefers-reduced-motion:reduce){button{transition:background-color 140ms ease}button:active{transform:none}}
+</style>
 </head>
 <body>
-  <h1>Upgrade Proof</h1>
-  <p>Run an npm upgrade in a disposable sandbox. Get an evidence bundle back.</p>
-  <form id="f">
-    <input name="pkg" value="chalk" aria-label="package">
-    <input name="version" value="5.4.1" aria-label="version">
-    <button>Run upgrade</button>
-  </form>
-  <pre id="log"></pre>
-  <script>
-    const log = document.getElementById("log");
-    document.getElementById("f").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      log.textContent = "";
-      const body = Object.fromEntries(new FormData(e.target));
-      const { id } = await (await fetch("/api/runs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })).json();
-      const es = new EventSource(`/api/runs/${id}/events`);
-      es.onmessage = (m) => {
-        const ev = JSON.parse(m.data);
-        log.textContent += (ev.type === "log" ? "  " + ev.line : JSON.stringify(ev)) + "\n";
-        log.scrollTop = log.scrollHeight;
-        if (ev.type === "done" || ev.type === "error") es.close();
-      };
-    });
-  </script>
+<header><div class="brand"><span class="mark" aria-hidden="true">↗</span>Upgrade Proof<span class="badge">Agent workspace</span></div><div class="header-right"><span class="badge"><span class="dot"></span>Disposable sandbox</span><button id="theme" type="button" aria-label="Switch to light theme">Light mode</button></div></header>
+<main>
+<div class="intro"><div><div class="eyebrow">Dependency changes. Verifiable outcomes.</div><h1>Don't trust the upgrade. Prove it.</h1><p class="subtle">Test the baseline, apply the change, and inspect the evidence.</p></div><span class="badge" id="run-state" role="status">Ready for a run</span></div>
+<div class="workspace">
+<aside class="panel input-panel"><h2>Configure an upgrade</h2><p>One change. An isolated execution.</p><form id="run-form"><label for="source">Project source</label><select id="source"><option value="fixture">Demo project</option><option value="repo">Public GitHub / GitLab repository</option></select><div id="repo-field" hidden><label for="repo">Repository URL</label><input id="repo" type="url" placeholder="https://github.com/owner/repository" autocomplete="off"></div><div class="row"><div><label for="pkg">npm package</label><input id="pkg" value="chalk" required pattern="(@[\w.\-]+/)?[\w.\-]+" autocomplete="off" spellcheck="false"></div><div><label for="version">Target version</label><input id="version" value="5.4.1" required autocomplete="off" spellcheck="false"></div></div><button class="primary" id="run" type="submit">Run upgrade ↗</button><div class="hint">One active run at a time.</div><p id="error" role="alert" hidden></p></form><div class="guardrails"><span class="eyebrow">Execution boundaries</span><div>↳ Disposable project copy</div><div>↳ Restricted network egress</div><div>↳ Hash-verifiable evidence bundle</div></div></aside>
+<div class="right">
+<section class="panel" aria-labelledby="execution-title"><div class="panel-title"><span id="execution-title">Execution timeline</span><span class="eyebrow" id="run-id">No run selected</span></div><ol class="timeline" style="list-style:none;margin:0" aria-label="Upgrade stages"><li class="stage" data-step="baseline"><div class="number">01</div><strong>Baseline</strong><span>Waiting</span></li><li class="stage" data-step="upgrade"><div class="number">02</div><strong>Upgrade</strong><span>Waiting</span></li><li class="stage" data-step="post-test"><div class="number">03</div><strong>Post-test</strong><span>Waiting</span></li><li class="stage" data-step="fix"><div class="number">04</div><strong>Fix</strong><span>If needed</span></li><li class="stage" data-step="bundle"><div class="number">05</div><strong>Bundle</strong><span>Waiting</span></li></ol></section>
+<div class="middle"><section class="panel"><div class="panel-title"><span>Live execution log</span><span class="eyebrow" id="log-state">Awaiting events</span></div><pre class="logs" id="log" tabindex="0" aria-label="Execution log">Start an upgrade to stream sandbox output here.</pre></section><section class="panel containment" id="containment" aria-labelledby="contain-title"><div class="panel-title"><h2 class="blocked-title" id="contain-title">Network containment</h2><span id="blocked-badge" class="eyebrow">Not evaluated</span></div><div class="contain-body"><h3 id="blocked-count">Awaiting evidence</h3><p id="blocked-note">Blocked outbound requests will appear here. No result is assumed before execution.</p><pre id="blocked-detail" aria-label="Blocked outbound request details"></pre></div></section></div>
+<section class="panel"><div class="panel-title"><span>Evidence & verdict</span><span class="eyebrow">SHA-256 manifest fingerprint</span></div><div class="evidence-body"><div class="result-line"><div><div class="eyebrow">Outcome</div><div id="verdict" role="status">Not evaluated</div></div><div><div class="eyebrow">Manifest SHA-256</div><div id="sha">Generated after execution</div></div></div><div id="files"><span class="empty">Evidence files become available when the run completes.</span></div></div></section>
+</div></div>
+<footer><span>Runs on Vultr Cloud Compute + Serverless Inference</span><span id="inference">Results are based on executed tests, not model confidence.</span></footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let stream=null,active=false,runId=null,logFiles=new Set(),request=0;
+const stages=['baseline','upgrade','post-test','fix','bundle'];
+const stageFor=name=>name==='baseline-test'?'baseline':name.startsWith('post-test-fix')?'fix':name;
+function stage(name,state,label){const el=document.querySelector(`[data-step="${name}"]`);if(!el)return;el.dataset.state=state;el.querySelector('span').textContent=label;}
+function log(line){const nearBottom=$('log').scrollHeight-$('log').scrollTop-$('log').clientHeight<45;$('log').append(document.createTextNode(line+'\n'));if($('log').textContent.length>160000)$('log').textContent=$('log').textContent.slice(-120000);if(nearBottom)$('log').scrollTop=$('log').scrollHeight;}
+function error(message){$('error').textContent=message;$('error').hidden=false;}
+function lock(value){active=value;for(const el of $('run-form').querySelectorAll('input,select,button'))el.disabled=value;$('run').textContent=value?'Running in sandbox…':'Run upgrade ↗';}
+function linkFile(name){const a=document.createElement('a');a.className='file';a.textContent=name+' ↗';a.href=`/api/runs/${runId}/evidence/${encodeURIComponent(name)}`;a.target='_blank';a.rel='noopener';$('files').append(a);}
+async function evidence(ticket){
+ const response=await fetch(`/api/runs/${runId}`);if(!response.ok)throw new Error('Could not load run details.');const run=await response.json();if(ticket!==request)return;
+ const summary=run.summary;if(!summary)throw new Error('Evidence is not ready yet.');
+ if(summary.fixes?.length){const last=summary.steps?.at(-1);stage('fix',last?.code===0?'passed':'failed',last?.code===0?'Tests passed':'Not resolved');}else{stage('fix','passed','Not needed');}
+ const count=summary.containment?.blockedEgress??0;$('blocked-count').textContent=`${count} outbound ${count===1?'request':'requests'} blocked`;$('containment').dataset.blocked=String(count>0);$('blocked-badge').textContent=count>0?'Blocked':'No blocked requests';$('blocked-note').textContent=count>0?'The outbound attempt was denied. Inspect the recorded destinations below.':'No blocked outbound requests were recorded for this run.';
+ $('inference').textContent=`Inference: ${typeof summary.inference==='string'?summary.inference:JSON.stringify(summary.inference)}`;
+ const names=['summary.json','upgrade.diff','egress-blocked.jsonl','manifest.json',...logFiles];$('files').replaceChildren();for(const name of names)linkFile(name);
+ if(count>0){const blocked=await fetch(`/api/runs/${runId}/evidence/egress-blocked.jsonl`);if(!blocked.ok)throw new Error('Blocked request details could not be loaded.');const text=await blocked.text();if(ticket===request)$('blocked-detail').textContent=text.slice(0,16000);}
+}
+async function event(ev,ticket){
+ if(ticket!==request)return;
+ if(ev.type==='plan'){log('[plan] '+JSON.stringify(ev.plan));$('run-state').textContent='Plan received';}
+ if(ev.type==='step'){const name=stageFor(ev.name);stage(name,'running','Running');if(name==='fix')stage('fix','running','Retesting');logFiles.add(`log-${ev.name}.txt`);log('$ '+ev.command);$('run-state').textContent=ev.name;$('log-state').textContent='Streaming';}
+ if(ev.type==='log')log(ev.line??'');
+ if(ev.type==='step-done'){stage(stageFor(ev.name),ev.code===0?'passed':'failed',`${ev.code===0?'Passed':'Failed'} · ${(ev.durationMs/1000).toFixed(1)}s`);log(`[${ev.name}] exit ${ev.code}`);}
+ if(ev.type==='fix'){stage('fix','running',`Attempt ${ev.attempt}`);log(`[fix ${ev.attempt}] ${ev.note}`);}
+ if(ev.type==='done'){
+ stream.close();$('verdict').textContent=ev.verdict;$('verdict').dataset.result=ev.verdict;$('sha').textContent=ev.manifestSha256||'Unavailable';stage('bundle','passed','Bundled');if(!document.querySelector('[data-step="fix"]').dataset.state)stage('fix','passed','Not needed');$('run-state').textContent='Run complete';$('log-state').textContent='Complete';lock(false);
+ try{await evidence(ticket);}catch(e){error(e.message+' Evidence links may still be available.');}
+ }
+ if(ev.type==='error'){stream.close();log('[error] '+ev.message);$('run-state').textContent='Run failed';$('log-state').textContent='Stopped';error(ev.message||'Execution failed.');lock(false);}
+}
+$('source').addEventListener('change',()=>{$('repo-field').hidden=$('source').value!=='repo';$('repo').required=$('source').value==='repo';});
+$('theme').addEventListener('click',()=>{const dark=document.documentElement.dataset.theme==='dark';document.documentElement.dataset.theme=dark?'light':'dark';$('theme').textContent=dark?'Dark mode':'Light mode';$('theme').setAttribute('aria-label',dark?'Switch to dark theme':'Switch to light theme');});
+$('run-form').addEventListener('submit',async e=>{
+ e.preventDefault();if(active)return;const ticket=++request;stream?.close();$('error').hidden=true;
+ const body={pkg:$('pkg').value.trim(),version:$('version').value.trim(),...($('source').value==='repo'?{repo:$('repo').value.trim()}:{fixture:'demo-app'})};
+ if(!body.pkg||!body.version){error('Enter a package and target version.');return;}
+ lock(true);$('log').textContent='';$('log-state').textContent='Connecting';$('run-state').textContent='Starting sandbox';$('run-id').textContent='Starting';logFiles=new Set();for(const name of stages){const el=document.querySelector(`[data-step="${name}"]`);delete el.dataset.state;el.querySelector('span').textContent=name==='fix'?'If needed':'Waiting';}$('verdict').textContent='Running';delete $('verdict').dataset.result;$('sha').textContent='Generated after execution';$('files').replaceChildren();$('containment').dataset.blocked='false';$('blocked-count').textContent='Awaiting evidence';$('blocked-badge').textContent='Not evaluated';$('blocked-detail').textContent='';$('blocked-note').textContent='Containment results are available after the run completes.';
+ try{
+ const response=await fetch('/api/runs',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw new Error(response.status===429?'Another run is in progress. Wait for it to finish, then try again.':data.error||`Request failed (${response.status}).`);if(!data.id)throw new Error('The server did not return a run ID.');runId=data.id;$('run-id').textContent='RUN / '+runId;stream=new EventSource(`/api/runs/${runId}/events`);
+ stream.onmessage=m=>{try{const ev=JSON.parse(m.data);void event(ev,ticket).catch(e=>error(e.message));}catch{error('An unreadable event was received.');}};
+ stream.onopen=()=>{if(active)$('log-state').textContent='Connected';};stream.onerror=()=>{if(active){$('log-state').textContent='Reconnecting';$('run-state').textContent='Connection interrupted';error('Stream interrupted. Reconnecting to the current run; do not start another run.');}};
+ }catch(err){error(err.message);$('run-state').textContent='Could not start';$('log-state').textContent='Stopped';lock(false);}
+});
+window.addEventListener('beforeunload',()=>stream?.close());
+</script>
 </body>
 </html>
