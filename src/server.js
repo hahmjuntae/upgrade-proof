@@ -2,11 +2,26 @@ import http from "node:http";
 import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve, extname } from "node:path";
+import { spawnSync } from "node:child_process";
+import { mkdirSync } from "node:fs";
 import { runUpgrade } from "./agent.js";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const FIXTURES = { "demo-app": join(ROOT, "fixtures/demo-app") };
 const runs = new Map();
+const REPO_RE = /^https:\/\/(github\.com|gitlab\.com)\/[\w.-]+\/[\w.-]+?(\.git)?\/?$/;
+
+function cloneRepo(repo, dest) {
+  mkdirSync(dest, { recursive: true });
+  const r = spawnSync("git", ["clone", "--depth", "1", "--single-branch", "--no-tags", repo, dest], {
+    encoding: "utf8", timeout: 60_000, env: { PATH: process.env.PATH, GIT_TERMINAL_PROMPT: "0" },
+  });
+  if (r.status !== 0) throw new Error(`git clone failed: ${(r.stderr || "timeout").trim().slice(0, 200)}`);
+  if (!existsSync(join(dest, "package.json"))) throw new Error("repository has no package.json at the root");
+  return dest;
+}
+
+const busy = () => [...runs.values()].some((r) => r.status === "running");
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json" };
 
 function json(res, status, body) {
@@ -19,15 +34,16 @@ async function readBody(req) {
   return raw ? JSON.parse(raw) : {};
 }
 
-function startRun({ fixture, pkg, version }) {
+function startRun({ fixture, repo, pkg, version }) {
   const id = randomUUID().slice(0, 8);
-  const run = { id, fixture, pkg, version, status: "running", events: [], listeners: new Set() };
+  const source = repo ? cloneRepo(repo, join(ROOT, "runs", id, "source")) : FIXTURES[fixture];
+  const run = { id, fixture: repo ? null : fixture, repo: repo ?? null, pkg, version, status: "running", events: [], listeners: new Set() };
   runs.set(id, run);
   const emit = (event) => {
     run.events.push(event);
     for (const send of run.listeners) send(event);
   };
-  runUpgrade({ source: FIXTURES[fixture], pkg, version, runDir: join(ROOT, "runs", id), egressLog: process.env.EGRESS_LOG, emit })
+  runUpgrade({ source, pkg, version, runDir: join(ROOT, "runs", id), egressLog: process.env.EGRESS_LOG, emit })
     .then((result) => Object.assign(run, { status: "done", summary: result.summary, manifestSha256: result.manifestSha256 }))
     .catch((err) => {
       run.status = "error";
@@ -40,11 +56,13 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://localhost");
   try {
     if (req.method === "POST" && url.pathname === "/api/runs") {
-      const { fixture = "demo-app", pkg, version } = await readBody(req);
-      if (!FIXTURES[fixture] || !/^(@[\w.-]+\/)?[\w.-]+$/.test(pkg ?? "") || !/^[\w.^~<>=-]+$/.test(version ?? "")) {
+      const { fixture = "demo-app", repo, pkg, version } = await readBody(req);
+      if (busy()) return json(res, 429, { error: "another run is in progress, try again in a minute" });
+      if (repo && !REPO_RE.test(repo)) return json(res, 400, { error: "repo must be a public https GitHub or GitLab URL" });
+      if ((!repo && !FIXTURES[fixture]) || !/^(@[\w.-]+\/)?[\w.-]+$/.test(pkg ?? "") || !/^[\w.^~<>=-]+$/.test(version ?? "")) {
         return json(res, 400, { error: "fixture, pkg, version are required and must be plain npm names" });
       }
-      const run = startRun({ fixture, pkg, version });
+      const run = startRun({ fixture, repo, pkg, version });
       return json(res, 202, { id: run.id });
     }
     const match = url.pathname.match(/^\/api\/runs\/(\w+)(\/events|\/evidence\/([\w.-]+))?$/);

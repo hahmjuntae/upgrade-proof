@@ -38,7 +38,7 @@ export async function runUpgrade({ source, pkg, version, runDir, egressLog, emit
   const startedAt = new Date().toISOString();
   const work = join(runDir, "work");
   mkdirSync(runDir, { recursive: true });
-  cpSync(source, work, { recursive: true, filter: (p) => !p.includes("node_modules") });
+  cpSync(source, work, { recursive: true, filter: (p) => !/[\/](node_modules|\.git)([\/]|$)/.test(p) });
   git(work, "init", "-q");
   git(work, "add", "-A");
   git(work, "-c", "user.name=upgrade-proof", "-c", "user.email=agent@upgrade-proof.local", "commit", "-qm", "baseline");
