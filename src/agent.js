@@ -61,7 +61,12 @@ export async function runUpgrade({ source, pkg, version, runDir, egressLog, emit
 
   const fixes = [];
   for (let attempt = 1; post.code !== 0 && attempt <= MAX_FIX_ATTEMPTS; attempt++) {
-    const fix = await proposeFix({ pkg, version, testLog: post.output, files: sourceFiles(work) });
+    let fix;
+    try {
+      fix = await proposeFix({ pkg, version, testLog: post.output, files: sourceFiles(work) });
+    } catch (error) {
+      fix = { source: "error", edits: [], note: `Model fix failed: ${error.message}` };
+    }
     fixes.push({ attempt, source: fix.source, note: fix.note, paths: fix.edits.map((e) => e.path) });
     emit({ type: "fix", attempt, note: fix.note });
     if (!fix.edits.length) break;

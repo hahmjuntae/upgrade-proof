@@ -20,9 +20,24 @@ export async function chat(messages, { model = MODEL, temperature = 0.2, timeout
 }
 
 function extractJson(text) {
-  const match = text.match(/\{[\s\S]*\}/);
+  const clean = text.replace(/<think>[\s\S]*?<\/think>/g, "");
+  const match = clean.match(/\{[\s\S]*\}/);
   if (!match) throw new Error("model reply has no JSON object");
   return JSON.parse(match[0]);
+}
+
+// 추론 모델 응답이 가끔 비거나 JSON이 깨짐 → 재시도 근거
+async function chatJson(messages, attempts = 3) {
+  let lastError;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const reply = await chat(messages);
+      return { model: reply.model, data: extractJson(reply.content) };
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
 }
 
 export async function planUpgrade({ pkg, version, manifest }) {
@@ -33,21 +48,28 @@ export async function planUpgrade({ pkg, version, manifest }) {
       risk: `Upgrade ${pkg} to ${version}. Check the changelog for breaking changes.`,
     };
   }
-  const reply = await chat([
+  const steps = ["baseline-test", "upgrade", "post-test", "fix-loop", "bundle"];
+  let reply;
+  try {
+    reply = await chatJson([
     {
       role: "system",
       content:
         "You plan npm dependency upgrades. Reply with JSON only: {\"risk\": string, \"breakingChanges\": string[], \"filesToWatch\": string[]}.",
     },
     { role: "user", content: `Upgrade ${pkg} to ${version}.\npackage.json:\n${manifest}` },
-  ]);
-  return { source: reply.model, steps: ["baseline-test", "upgrade", "post-test", "fix-loop", "bundle"], ...extractJson(reply.content) };
+    ]);
+  } catch (error) {
+    // 계획은 참고용이라 실패해도 실행 계속 우선
+    return { source: "fallback", steps, risk: `Plan unavailable (${error.message}). Tests decide the verdict.` };
+  }
+  return { source: reply.model, steps, ...reply.data };
 }
 
 export async function proposeFix({ pkg, version, testLog, files }) {
   if (inferenceMode() === "offline") return { source: "offline", edits: [], note: "No model key. Fix loop skipped." };
   const listing = files.map((f) => `--- ${f.path}\n${f.content}`).join("\n\n");
-  const reply = await chat([
+  const reply = await chatJson([
     {
       role: "system",
       content:
@@ -55,5 +77,5 @@ export async function proposeFix({ pkg, version, testLog, files }) {
     },
     { role: "user", content: `Upgraded ${pkg} to ${version}. Tests fail.\n\nTest log (tail):\n${testLog.slice(-4000)}\n\nSource files:\n${listing}` },
   ]);
-  return { source: reply.model, ...extractJson(reply.content) };
+  return { source: reply.model, edits: [], ...reply.data };
 }
