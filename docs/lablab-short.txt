@@ -1,0 +1,1 @@
+An agent for teams that review npm upgrades. It tests each upgrade in a disposable Vultr sandbox, blocks hidden network calls, and returns an evidence bundle with a SHA-256 manifest.

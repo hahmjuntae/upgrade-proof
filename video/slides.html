@@ -22,6 +22,23 @@ li b{color:#ecece6;font-weight:600;min-width:330px}
 .card .n{font-size:84px;font-weight:600;letter-spacing:-.03em;color:#ecece6}
 .card .l{font-size:28px;color:#9d9d96;margin-top:10px}
 .shot{position:absolute;right:-120px;bottom:-60px;width:1060px;border-radius:18px;border:1px solid #2c2c29;opacity:.95}
+.arch{display:grid;grid-template-columns:330px 1fr 420px;gap:0 40px;align-items:stretch;margin-top:8px}
+.box{border:1px solid #3a3a36;border-radius:16px;padding:22px 26px;font-size:28px;line-height:1.35;color:#c9c9c2}
+.box b{display:block;color:#ecece6;font-size:31px;font-weight:600;margin-bottom:6px}
+.vm{border:2px solid #4c7cf0;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:16px;position:relative}
+.vm>.t{font-size:22px;letter-spacing:.12em;text-transform:uppercase;color:#7fa2f5}
+.row{display:flex;gap:16px;align-items:center}
+.ar{font-family:JBM,monospace;font-size:30px;color:#8d8d86;text-align:center}
+.side{display:flex;flex-direction:column;justify-content:space-between;gap:18px}
+.sb{border-color:#4c7cf0}.rd{border-color:#ff6b5e;color:#ff9b91}
+table.c{border-collapse:collapse;width:100%;font-size:32px}
+table.c th{font-size:22px;letter-spacing:.12em;text-transform:uppercase;color:#8d8d86;text-align:left;font-weight:600;padding:0 0 14px}
+table.c td{padding:20px 24px 20px 0;border-top:1px solid #2c2c29;vertical-align:top;color:#c9c9c2;line-height:1.35}
+table.c td:first-child{color:#ecece6;font-weight:600;white-space:nowrap}
+table.c .n{font-size:40px;font-weight:600;color:#ecece6}
+table.c .n.r{color:#ff6b5e}table.c .n.g{color:#4cc26e}
+table.c td:last-child{white-space:nowrap}
+.note{font-size:22px;color:#6f6f69;margin-top:22px}
 </style></head><body>
 
 <section id="s1">
@@ -98,23 +115,41 @@ li b{color:#ecece6;font-weight:600;min-width:330px}
 </section>
 
 <section id="s8">
-<div class="k">Vultr</div>
-<h2>The whole loop runs on Vultr.</h2>
-<ul>
-<li><b>Cloud Compute</b><span>Agent server, Docker sandboxes, and egress proxy on one VM in Seoul.</span></li>
-<li><b>Serverless Inference</b><span>OpenAI-compatible API. <span class="mono">qwen3.8-27b</span> writes the plan and the fix.</span></li>
-<li><b>Model choice</b><span>We tested three models on the demo. qwen3.8-27b answered correctly in 1.7 s.</span></li>
-</ul>
+<div class="k">Architecture</div>
+<h2 style="margin-bottom:36px">The whole loop runs on Vultr.</h2>
+<div class="arch">
+ <div class="side">
+  <div class="box"><b>Reviewer</b>Web UI: project, package, version. Live log over SSE.</div>
+  <div class="box"><b>Evidence bundle</b>summary, diff, step logs, blocked calls, SHA-256 manifest.</div>
+ </div>
+ <div class="vm"><div class="t">Vultr Cloud Compute · Seoul VM</div>
+  <div class="box"><b>Agent server (Node.js)</b>Plans, runs each step, applies fixes, writes evidence.</div>
+  <div class="ar">↓ one new container per step</div>
+  <div class="row">
+   <div class="box" style="flex:1"><b>Docker sandbox</b>No host env, no capabilities, read-only root, non-root user. Internal network only.</div>
+   <div class="ar">→</div>
+   <div class="box" style="flex:1"><b>Egress proxy</b>Allows registry.npmjs.org. Logs and blocks the rest.</div>
+  </div>
+ </div>
+ <div class="side">
+  <div class="box sb"><b>Vultr Serverless Inference</b><span class="mono">qwen3.8-27b</span> writes the plan and each fix. 1.7 s on the demo.</div>
+  <div class="box"><b>registry.npmjs.org</b>Only allowed host.</div>
+  <div class="box rd"><b>Any other host</b>CONNECT refused, logged to egress-blocked.jsonl.</div>
+ </div>
+</div>
 </section>
 
 <section id="s9">
-<div class="k">Value</div>
-<h2>Turn each dependency pull request into a checked result.</h2>
-<ul>
-<li><b>Who</b><span>Teams that review many Dependabot or Renovate pull requests.</span></li>
-<li><b>Before</b><span>A reviewer repeats the upgrade by hand, with real tokens on the machine.</span></li>
-<li><b>After</b><span>The reviewer reads a verdict, a diff, and logs that match a hash.</span></li>
-</ul>
+<div class="k">Before and after · same demo project</div>
+<h2 style="margin-bottom:36px">A manual upgrade exposes tokens. Upgrade Proof contains it.</h2>
+<table class="c">
+<tr><th></th><th>Before: npm install by hand</th><th>After: Upgrade Proof</th></tr>
+<tr><td>Fake tokens visible to the install script</td><td><span class="n r">3 of 3</span></td><td><span class="n g">0</span> (no host env)</td></tr>
+<tr><td>Outbound calls from the install script</td><td><span class="n r">2 sent</span></td><td><span class="n g">2 blocked</span> by the proxy</td></tr>
+<tr><td>Tests after chalk 4 → 5.4.1</td><td><span class="n r">fail</span>, no fix</td><td><span class="n g">pass</span> after 1 model fix</td></tr>
+<tr><td>Evidence for the reviewer</td><td><span class="n">0</span> files</td><td><span class="n g">7</span> files with SHA-256</td></tr>
+</table>
+<div class="note">Before: node:24 container, 3 fake tokens in env, npm install and npm test, 2026-11-05. The calls failed only because the .invalid host does not resolve. After: run 52dfb522 on Vultr, 26 s.</div>
 </section>
 
 <section id="s10">
@@ -126,5 +161,17 @@ li b{color:#ecece6;font-weight:600;min-width:330px}
 <li><b>Next</b><span>GitHub App for pull requests, pnpm and yarn, signed bundles.</span></li>
 </ul>
 <div class="foot"><span>Upgrade Proof · MIT</span><span>Don't trust the upgrade. Prove it.</span></div>
+</section>
+
+<section id="s11">
+<div class="k">Judging criteria</div>
+<h2 style="margin-bottom:36px">Where each criterion is answered.</h2>
+<table class="c">
+<tr><th>Criterion</th><th>Answer</th><th>Where</th></tr>
+<tr><td>Application of Technology</td><td>The model plans the upgrade and writes the fix. Cloud Compute runs every step in a new sandbox.</td><td>Slides 3, 8<br>Video 0:38</td></tr>
+<tr><td>Presentation</td><td>A live run with real logs, the blocked calls, and the verdict.</td><td>Video<br>Live demo URL</td></tr>
+<tr><td>Business Value</td><td>Teams that review Dependabot or Renovate pull requests get a verdict with proof.</td><td>Slides 2, 9</td></tr>
+<tr><td>Originality</td><td>The agent proves its own work. Each claim has a log file and a hash.</td><td>Slides 4, 6, 7</td></tr>
+</table>
 </section>
 </body></html>

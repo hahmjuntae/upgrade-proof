@@ -35,6 +35,20 @@ Each sandbox is a Docker container with these limits:
 
 The proxy writes each refused connection to `egress.jsonl`. The bundle includes these records.
 
+### Architecture
+
+![Architecture](docs/architecture.png)
+
+```
+Vultr Cloud Compute VM (Seoul)
+  agent server (Node.js): web UI, SSE log, evidence writer
+    → Vultr Serverless Inference (qwen3.8-27b): plan and fixes
+    → Docker sandbox, one per step (internal network only)
+        → egress proxy
+            → registry.npmjs.org: allowed
+            → any other host: refused, logged to egress-blocked.jsonl
+```
+
 ## Vultr services
 
 | Service | Use |
@@ -75,6 +89,28 @@ Run `52dfb522` on the live server, 2026-11-05:
 | Verdict | `upgrade-proven`, full run 26 s |
 
 A second run used a public repository: `jonschlinkert/is-number`, mocha 3 to 10.8.2. The tests passed with no change.
+
+## Before and after
+
+The same demo project, upgraded by hand and with Upgrade Proof:
+
+| Measure | Before: npm install by hand | After: Upgrade Proof |
+|---|---|---|
+| Fake tokens visible to the install script | 3 of 3 | 0 (no host environment) |
+| Outbound calls from the install script | 2 sent | 2 blocked by the proxy |
+| Tests after chalk 4 to 5.4.1 | fail, no fix | pass after 1 model fix |
+| Evidence for the reviewer | 0 files | 7 files with SHA-256 |
+
+The before case is `scripts/manual-baseline.sh`. It runs `npm install` and `npm test` in a `node:24` container with 3 fake tokens, 2026-11-05. The 2 calls failed only because the `.invalid` host does not resolve. The after case comes from run `52dfb522`.
+
+## Judging criteria
+
+| Criterion | Answer | Where |
+|---|---|---|
+| Application of Technology | The model plans the upgrade and writes the fix. Cloud Compute runs every step in a new sandbox. | How it works, slides 3 and 8, video 0:38 |
+| Presentation | A live run shows real logs, the blocked calls, and the verdict. | Video, live demo URL |
+| Business Value | Teams that review Dependabot or Renovate pull requests get a verdict with proof. | Before and after, slides 2 and 9 |
+| Originality | The agent proves its own work. Each claim has a log file and a hash. | Demo result, slides 4, 6, and 7 |
 
 ## Model choice
 

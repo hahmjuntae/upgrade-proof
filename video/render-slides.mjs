@@ -1,7 +1,7 @@
 // 슬라이드 HTML을 장별 PNG와 PDF로 출력(ego-browser nodejs 전용)
 const fs = await import("node:fs");
 const V = "/Users/hahmjuntae/Desktop/workspace/personal/hackathons/upgrade-proof/video/";
-const task = await taskSpace(131);
+const task = await taskSpace("upgrade-proof slides");
 const p = task.page("p1");
 await p.cdp("Emulation.setDeviceMetricsOverride", { width: 1920, height: 1080, deviceScaleFactor: 1, mobile: false });
 await p.goto("file://" + V + "slides.html");

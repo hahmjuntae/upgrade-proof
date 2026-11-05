@@ -1,0 +1,11 @@
+For teams that review dependency pull requests, Upgrade Proof proves each npm upgrade in a disposable Vultr sandbox. Reviewers then merge with evidence, not trust.
+
+Problem: An upgrade pull request often says "tested locally" and shows no proof. Also, npm install runs package scripts with the developer's environment. A hostile script can read tokens and send them out.
+
+How it works: You give a project, a package, and a target version. Vultr Serverless Inference (qwen3.8-27b) reads package.json and writes a plan. The agent runs the baseline tests, the upgrade, and the tests again. Each step runs in a new Docker container on Vultr Cloud Compute. The container has no host environment, no Linux capabilities, a read-only root, and a non-root user. Its only exit is a proxy that allows the npm registry. If the tests fail, the model proposes a fix. The agent applies it and tests again, up to three times.
+
+Demo result: chalk 4 to 5.4.1 broke the tests because chalk 5 is ESM only. The model replaced the chalk calls, and the tests passed. A hostile postinstall script tried to call an outside collector two times. The proxy blocked both calls, and the sandbox had no secrets. The full run took 26 seconds. A second run upgraded mocha 3 to 10 in a public GitHub package with no change.
+
+Output: summary.json, upgrade.diff, each step log, egress-blocked.jsonl, and manifest.json with the SHA-256 of each file.
+
+Limits: npm only, one run at a time, and Docker containers instead of microVMs. Next: a GitHub App, pnpm and yarn, and signed bundles.
