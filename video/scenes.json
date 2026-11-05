@@ -1,0 +1,137 @@
+[
+ {
+  "frames": [
+   "slides/s1.png"
+  ],
+  "text": "Upgrade Proof is a tool for teams that review npm upgrades. It proves each upgrade in a disposable Vultr sandbox.",
+  "say": "Upgrade Proof is a tool for teams that review npm upgrades. It proves each upgrade in a disposable Vulture sandbox."
+ },
+ {
+  "frames": [
+   "slides/s2.png"
+  ],
+  "text": "An upgrade pull request often says tested locally. It shows no proof."
+ },
+ {
+  "frames": [
+   "slides/s2.png"
+  ],
+  "text": "Also, npm install runs package scripts with your environment. A hostile script can read your tokens and send them out."
+ },
+ {
+  "frames": [
+   "demo/0001.png"
+  ],
+  "text": "This is the agent workspace. It runs on Vultr Cloud Compute in Seoul.",
+  "say": "This is the agent workspace. It runs on Vulture Cloud Compute in Seoul."
+ },
+ {
+  "frames": [
+   "demo/0002.png"
+  ],
+  "text": "The demo project uses chalk 4. Its test helper has a hostile postinstall script. We ask for chalk 5.4.1.",
+  "say": "The demo project uses chalk 4. Its test helper has a hostile postinstall script. We ask for chalk five point four point one."
+ },
+ {
+  "frames": [
+   "demo/0003.png",
+   "demo/0004.png",
+   "demo/0005.png",
+   "demo/0006.png"
+  ],
+  "text": "First, Vultr Serverless Inference reads the package file and writes a plan. The plan flags the hostile script before any install runs.",
+  "say": "First, Vulture Serverless Inference reads the package file and writes a plan. The plan flags the hostile script before any install runs."
+ },
+ {
+  "frames": [
+   "demo/0007.png",
+   "demo/0008.png",
+   "demo/0009.png",
+   "demo/0010.png"
+  ],
+  "text": "Each step runs in a new Docker container. The baseline tests pass. Then the agent installs chalk 5."
+ },
+ {
+  "frames": [
+   "demo/0013.png",
+   "files/log_post_test_txt.png"
+  ],
+  "text": "The tests fail. Chalk 5 is ESM only, so chalk dot green is not a function."
+ },
+ {
+  "frames": [
+   "demo/0020.png",
+   "demo/0024.png"
+  ],
+  "text": "The agent sends the test log and the source files to the model. The model returns a fix. The agent tests again."
+ },
+ {
+  "frames": [
+   "files/upgrade_diff.png"
+  ],
+  "text": "The fix replaces the chalk calls with a small color helper. Now the tests pass."
+ },
+ {
+  "frames": [
+   "demo/0029.png@containment"
+  ],
+  "text": "Now look at network containment. The hostile script tried to connect to an outside collector two times."
+ },
+ {
+  "frames": [
+   "demo/0029.png@containment"
+  ],
+  "text": "The egress proxy blocked both calls. The sandbox had no secrets to send."
+ },
+ {
+  "frames": [
+   "demo/0029.png@evidence"
+  ],
+  "text": "The verdict is upgrade proven. The full run took 26 seconds."
+ },
+ {
+  "frames": [
+   "demo/0029.png@evidence",
+   "files/manifest_json.png"
+  ],
+  "text": "The evidence bundle holds the diff, each test log, the blocked calls, and a SHA-256 manifest. A reviewer can check each file against the manifest."
+ },
+ {
+  "frames": [
+   "repo/0002.png",
+   "repo/LAST"
+  ],
+  "text": "You can also give a public GitHub URL. Here, the agent upgrades mocha 3 to 10 in a real open source package. The tests pass with no change."
+ },
+ {
+  "frames": [
+   "slides/s4.png"
+  ],
+  "text": "The sandbox drops all Linux capabilities. It uses a read-only root and a non-root user. Its only exit is a proxy to the npm registry."
+ },
+ {
+  "frames": [
+   "slides/s8.png"
+  ],
+  "text": "Vultr runs the whole loop. Cloud Compute hosts the agent and the sandboxes. Serverless Inference writes the plan and the fix.",
+  "say": "Vulture runs the whole loop. Cloud Compute hosts the agent and the sandboxes. Serverless Inference writes the plan and the fix."
+ },
+ {
+  "frames": [
+   "slides/s9.png"
+  ],
+  "text": "Many teams get dependency pull requests every week. Upgrade Proof turns each one into a checked result with proof."
+ },
+ {
+  "frames": [
+   "slides/s10.png"
+  ],
+  "text": "Today it supports npm and one run at a time. Next, we will add a GitHub App and more package managers."
+ },
+ {
+  "frames": [
+   "slides/s1.png"
+  ],
+  "text": "Upgrade Proof. Don't trust the upgrade. Prove it."
+ }
+]

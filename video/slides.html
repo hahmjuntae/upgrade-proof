@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Upgrade Proof</title><style>
+@font-face{font-family:Pretendard;src:url(../public/design/fonts/PretendardVariable.woff2) format("woff2");font-weight:100 900}
+@font-face{font-family:JBM;src:url(../public/design/fonts/JetBrainsMono-Variable.woff2) format("woff2");font-weight:100 800}
+@page{size:1920px 1080px;margin:0}
+*{box-sizing:border-box}
+html,body{margin:0;background:#101010}
+section{width:1920px;height:1080px;padding:120px 140px;background:#141414;color:#ecece6;font-family:Pretendard,-apple-system,sans-serif;position:relative;page-break-after:always;overflow:hidden;display:flex;flex-direction:column}
+.k{font:600 24px/1 Pretendard;letter-spacing:.14em;text-transform:uppercase;color:#8d8d86}
+h1{font-size:132px;font-weight:600;letter-spacing:-.035em;margin:36px 0 28px;line-height:1}
+h2{font-size:76px;font-weight:600;letter-spacing:-.03em;margin:28px 0 48px;line-height:1.08;max-width:1500px}
+p,li{font-size:38px;line-height:1.45;color:#c9c9c2}
+p{margin:0 0 22px;max-width:1400px}
+ul{margin:0;padding-left:0;list-style:none}
+li{padding:18px 0;border-top:1px solid #2c2c29;display:flex;gap:28px}
+li b{color:#ecece6;font-weight:600;min-width:330px}
+.mono{font-family:JBM,monospace}
+.flow{font-family:JBM,monospace;font-size:34px;line-height:1.75;color:#ecece6;white-space:pre}
+.foot{position:absolute;left:140px;right:140px;bottom:64px;display:flex;justify-content:space-between;font-size:22px;color:#6f6f69}
+.g{color:#4cc26e}.r{color:#ff6b5e}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:20px}
+.card{border:1px solid #2c2c29;border-radius:18px;padding:36px}
+.card .n{font-size:84px;font-weight:600;letter-spacing:-.03em;color:#ecece6}
+.card .l{font-size:28px;color:#9d9d96;margin-top:10px}
+.shot{position:absolute;right:-120px;bottom:-60px;width:1060px;border-radius:18px;border:1px solid #2c2c29;opacity:.95}
+</style></head><body>
+
+<section id="s1">
+<div class="k">Vultr Agent Rush · Challenge 1</div>
+<h1>Upgrade Proof</h1>
+<p style="font-size:46px;color:#ecece6">Don't trust the upgrade. Prove it.</p>
+<p style="max-width:760px">An agent that tests each npm upgrade in a disposable Vultr sandbox and returns an evidence bundle.</p>
+<img class="shot" src="shot-done.png" alt="">
+<div class="foot" style="flex-direction:column;gap:10px;justify-content:flex-end"><span>JunTae Hahm · individual entry</span><span class="mono" style="font-size:20px">github.com/hahmjuntae/upgrade-proof</span></div>
+</section>
+
+<section id="s2">
+<div class="k">Problem</div>
+<h2>"Tested locally" is not proof.</h2>
+<ul>
+<li><b>No evidence</b><span>An upgrade pull request often shows no test log and no diff of what changed.</span></li>
+<li><b>Install scripts</b><span>npm install runs package scripts with the developer's environment and tokens.</span></li>
+<li><b>Review load</b><span>Reviewers must trust the author or repeat the upgrade by hand.</span></li>
+</ul>
+</section>
+
+<section id="s3">
+<div class="k">What it does</div>
+<h2>One request in. One evidence bundle out.</h2>
+<div class="flow">project + package + version
+  → plan        Vultr Serverless Inference
+  → baseline    install + test in a new container
+  → upgrade     npm install &lt;pkg&gt;@&lt;version&gt;
+  → test        on failure, the model proposes a fix (max 3)
+  → bundle      diff, logs, blocked calls, SHA-256 manifest</div>
+</section>
+
+<section id="s4">
+<div class="k">Sandbox</div>
+<h2>Each step runs in a new, locked container.</h2>
+<ul>
+<li><b>Network</b><span>Internal network only. The single exit is a proxy that allows <span class="mono">registry.npmjs.org</span>.</span></li>
+<li><b>Secrets</b><span>No host environment. The model key stays in the agent process.</span></li>
+<li><b>Privileges</b><span>All capabilities dropped, no-new-privileges, non-root user, read-only root.</span></li>
+<li><b>Limits</b><span>1 CPU, 1 GB memory, 256 processes, 5 minutes per step. Deleted after each step.</span></li>
+</ul>
+</section>
+
+<section id="s5">
+<div class="k">Demo result · chalk 4 → 5.4.1</div>
+<h2>The upgrade broke the tests. The agent fixed it and proved it.</h2>
+<div class="grid">
+<div class="card"><div class="n r">1 fail</div><div class="l">chalk 5 is ESM only. <span class="mono">chalk.green</span> is not a function.</div></div>
+<div class="card"><div class="n g">1 fix</div><div class="l">The model replaced the chalk calls. The tests pass.</div></div>
+<div class="card"><div class="n">26 s</div><div class="l">Full run on Vultr: plan, 4 sandbox steps, bundle.</div></div>
+</div>
+</section>
+
+<section id="s6">
+<div class="k">Containment</div>
+<h2>The hostile install script found no secrets. The proxy blocked it.</h2>
+<div class="grid">
+<div class="card"><div class="n r">2</div><div class="l">CONNECT calls to <span class="mono">collector.attacker.invalid</span> blocked</div></div>
+<div class="card"><div class="n g">0</div><div class="l">Secrets inside the sandbox</div></div>
+<div class="card"><div class="n">1</div><div class="l">Risk flagged by the plan before any install ran</div></div>
+</div>
+</section>
+
+<section id="s7">
+<div class="k">Evidence bundle</div>
+<h2>Every claim has a file. Every file has a hash.</h2>
+<ul class="mono" style="font-size:34px"><style>#s7 li b{min-width:480px}</style>
+<li><b>summary.json</b><span>verdict, plan, fixes, step exit codes</span></li>
+<li><b>upgrade.diff</b><span>code and manifest changes</span></li>
+<li><b>log-*.txt</b><span>full output of each sandbox step</span></li>
+<li><b>egress-blocked.jsonl</b><span>each refused connection</span></li>
+<li><b>manifest.json</b><span>SHA-256 of each file</span></li>
+</ul>
+</section>
+
+<section id="s8">
+<div class="k">Vultr</div>
+<h2>The whole loop runs on Vultr.</h2>
+<ul>
+<li><b>Cloud Compute</b><span>Agent server, Docker sandboxes, and egress proxy on one VM in Seoul.</span></li>
+<li><b>Serverless Inference</b><span>OpenAI-compatible API. <span class="mono">qwen3.8-27b</span> writes the plan and the fix.</span></li>
+<li><b>Model choice</b><span>We tested three models on the demo. qwen3.8-27b answered correctly in 1.7 s.</span></li>
+</ul>
+</section>
+
+<section id="s9">
+<div class="k">Value</div>
+<h2>Turn each dependency pull request into a checked result.</h2>
+<ul>
+<li><b>Who</b><span>Teams that review many Dependabot or Renovate pull requests.</span></li>
+<li><b>Before</b><span>A reviewer repeats the upgrade by hand, with real tokens on the machine.</span></li>
+<li><b>After</b><span>The reviewer reads a verdict, a diff, and logs that match a hash.</span></li>
+</ul>
+</section>
+
+<section id="s10">
+<div class="k">Limits and next steps</div>
+<h2>Built during the hackathon. Honest about the gaps.</h2>
+<ul>
+<li><b>Today</b><span>npm only. One run at a time. Docker containers, not microVMs.</span></li>
+<li><b>Model fixes</b><span>A fix can change more than needed. The diff shows every change.</span></li>
+<li><b>Next</b><span>GitHub App for pull requests, pnpm and yarn, signed bundles.</span></li>
+</ul>
+<div class="foot"><span>Upgrade Proof · MIT</span><span>Don't trust the upgrade. Prove it.</span></div>
+</section>
+</body></html>

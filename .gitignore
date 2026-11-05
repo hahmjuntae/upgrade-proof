@@ -4,3 +4,5 @@ runs/
 *.log
 .DS_Store
 .egress/
+video/frames/
+video/out/
