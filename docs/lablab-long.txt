@@ -6,6 +6,8 @@ How it works: You give a project, a package, and a target version. Vultr Serverl
 
 Demo result: chalk 4 to 5.4.1 broke the tests because chalk 5 is ESM only. The model replaced the chalk calls, and the tests passed. A hostile postinstall script tried to call an outside collector two times. The proxy blocked both calls, and the sandbox had no secrets. The full run took 26 seconds. A second run upgraded mocha 3 to 10 in a public GitHub package with no change.
 
+Before and after: We upgraded the same project by hand in a plain container with 3 fake tokens. The install script saw all 3 tokens and sent 2 outbound calls. The tests failed. The reviewer got no evidence. With Upgrade Proof, the script saw 0 tokens, and the proxy blocked both calls. The tests passed after 1 fix. The reviewer got 7 hashed files.
+
 Output: summary.json, upgrade.diff, each step log, egress-blocked.jsonl, and manifest.json with the SHA-256 of each file.
 
 Limits: npm only, one run at a time, and Docker containers instead of microVMs. Next: a GitHub App, pnpm and yarn, and signed bundles.
